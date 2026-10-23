@@ -1,0 +1,31 @@
+<p style="color: green"><%= notice %></p>
+<% content_for :title, "ショッピングカート" %>
+
+<header>
+  <h1>ショッピングカート</h1>
+  <%= link_to "商品一覧へ戻る", products_path %>
+</header>
+
+<% if @cart.cart_items.empty? %>
+  <p>カートに商品はありません。</p>
+<% else %>
+  <table>
+    <thead>
+      <tr><th>商品名</th><th>価格</th><th>数量</th><th>小計</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% @cart.cart_items.includes(:product).each do |item| %>
+        <tr>
+          <td><%= item.product.name %></td>
+          <td><%= number_to_currency(item.product.price, unit: "¥", precision: 0) %></td>
+          <td><%= item.quantity %></td>
+          <td><%= number_to_currency(item.quantity * item.product.price, unit: "¥", precision: 0) %></td>
+          <td><%= button_to "削除", cart_item_path(item), method: :delete %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr><th colspan="3">合計金額</th><td><%= number_to_currency(@cart.total_price, unit: "¥", precision: 0) %></td><td></td></tr>
+    </tfoot>
+  </table>
+<% end %>
